@@ -411,6 +411,74 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by defensive programming principles
 - Built to solve real-world collections analytics challenges
 
+# Appendix: Advanced Analytics Queries
+
+This section contains advanced SQL queries demonstrating integration of multiple concepts including CTEs, window functions, and complex business logic.
+
+---
+
+## Query 15: Service Type Revenue & Ticket Analysis
+
+**Business Question:**  
+Which service types generate the highest average ticket value, and how do they compare against each other and the overall average?
+
+**Technical Complexity:** ⭐⭐⭐⭐ Advanced
+
+### Query Structure
+
+```
+CTE1 (tab_pedidos)    → Count orders by service type
+CTE2 (tab_revenue)    → Calculate revenue by service type  
+CTE3 (tab_analisis)   → Compute ticket average + comparative metrics
+Final SELECT          → Business classification and ranking
+```
+
+### Key Concepts Demonstrated
+
+- **Multiple CTEs (3 levels):** Modular query architecture for complex logic
+- **Window Functions:**
+  - `MAX() OVER()` - Identify highest ticket average globally
+  - `AVG() OVER()` - Calculate overall average ticket across all types
+  - `ROW_NUMBER() OVER()` - Rank service types by performance
+- **Derived Metrics:** Ticket promedio calculation (revenue / orders)
+- **Comparative Analysis:** Difference vs top performer
+- **Business Logic:** CASE WHEN for performance classification
+
+### Output Columns
+
+| Column | Description |
+|--------|-------------|
+| `tipo_servicio` | Service channel (Mesa/Delivery/Para Llevar) |
+| `total_pedidos` | Number of orders for this service type |
+| `revenue_total` | Total revenue generated |
+| `ticket_promedio` | Average ticket value (revenue ÷ orders) |
+| `ranking_ticket` | Rank by average ticket (1 = highest) |
+| `diferencia_vs_top` | Difference vs highest ticket average |
+| `posicion` | "Arriba/Abajo del promedio" classification |
+
+### Business Value
+
+- **Revenue Optimization:** Identifies which service channels generate higher-value orders
+- **Pricing Strategy:** Supports decisions on delivery fees, promotions, or service focus
+- **Performance Benchmarking:** Enables comparison of service types against overall average
+- **Resource Allocation:** Helps prioritize investment in most profitable channels
+
+### Technical Implementation Notes
+
+**Window Functions Pattern:**
+```sql
+MAX(ticket_promedio) OVER() AS max_ticket  -- Repeats max on each row
+AVG(ticket_promedio) OVER() AS avg_ticket  -- Repeats average on each row
+```
+
+These functions calculate aggregate values WITHOUT collapsing rows, enabling row-by-row comparisons in the final SELECT.
+
+**CTE Architecture Benefits:**
+- **Modularity:** Each CTE handles one logical step
+- **Readability:** Clear separation of aggregation vs calculation
+- **Maintainability:** Easy to modify individual calculation steps
+- **Performance:** Query optimizer can cache intermediate results
+
 ---
 
 **Last Updated:** 2026-01-29  
